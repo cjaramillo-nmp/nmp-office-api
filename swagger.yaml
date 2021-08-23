@@ -1,0 +1,265 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "API Office"
+  description: API de Gestión de oficinas 
+
+host: "nmp.com.mx"
+basePath: "/v1"
+
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+
+securityDefinitions:
+  BasicAuth:
+    type: basic
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-Key
+  OAuth2:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: https://nmp.com.mx/oauth/authorize
+    tokenUrl: https://nmp.com.mx/oauth/token
+
+definitions:
+
+## Definicion de responses genericas
+  
+  GenericResponse:
+    type: object
+    properties:
+      code:
+        type: string
+        example: NMP-CRD-201
+      status:
+        type: string
+        example: SUCCESS
+      message:
+        type: string
+        example: Se ha realizado correctamente la operación
+  
+  BadRequest:
+    type: object
+    properties:
+      code:
+        type: string
+        example: NMP-CRD-400
+      message:
+        type: string
+        example: La solicitud no se encuentra bien formada
+  
+  Unauthorized:
+    type: object
+    properties:
+      code:
+        type: string
+        example: NMP-CRD-401
+      message:
+        type: string
+        example: Se ha producido un error de autorización
+  
+  Forbidden:
+    type: object
+    properties:
+      code:
+        type: string
+        example: NMP-CRD-403
+      message:
+        type: string
+        example: Se ha producido un error de autorización
+  
+  NotFound:
+    type: object
+    properties:
+      code:
+        type: string
+        example: NMP-CRD-404
+      message:
+        type: string
+        example: No se encontraron resultados
+  
+  InternalServerError:
+    type: object
+    properties:
+      code:
+        type: string
+        example: NMP-CRD-500
+      message:
+        type: string
+        example: Ocurrio un error interno en el servidor.
+
+## Constantes
+  
+  SortDirection: &SORT_DIRECTION
+    type: string
+    description: >
+      Son los :
+        - ASC - Ordenamiento Ascendente
+        - DESC - Ordenamiento Descendente
+    enum:
+      - ASC
+      - DESC
+
+  UnidadOrganizacional: &UnidadOrganizacional
+    type: string
+    description: >
+      Unidad Organizacional:
+        - NMP - Nacional Monte de Piedad
+        - FMP - Financiera Monte de piedad
+    enum:
+      - NMP
+      - FMP
+
+parameters:
+  
+## Header Params
+  UOHeader:
+    in: header
+    name: unidadOrganizacional
+    type: string
+    <<: *UnidadOrganizacional
+    description: Unidad organizacional
+    default: "FMP"
+    required: true
+  
+  ChannelHeader:
+    in: header
+    name: canal
+    type: string
+    description: Canal
+    default: "Fénix"
+    required: true
+  
+  ProductHeader:
+    in: header
+    name: producto
+    type: string
+    description: Producto
+    default: "Crédito Personal"
+    required: true  
+    
+  DataOriginHeader:
+    in: header
+    name: origenDato
+    type: string
+    description: Origen de los datos
+    default: "Fénix Web"
+    required: true
+
+## Query Params
+  UOQueryParam:
+    in: query
+    name: origin.unidadOrganizacional
+    type: string
+    <<: *UnidadOrganizacional
+    description: Unidad organizacional
+    default: "FMP"
+  
+  ChannelQueryParam:
+    in: query
+    name: origin.canal
+    type: string
+    description: Canal
+    default: "Fénix & Paradigmas"
+  
+  ProductQueryParam:
+    in: query
+    name: origin.producto
+    type: string
+    description: Producto
+    default: "Crédito Personal"
+    
+  DataOriginQueryParam:
+    in: query
+    name: origin.origenDato
+    type: string
+    description: Origen de los datos
+    default: "Web Fénix"
+  
+  PageNumberQueryParam:
+    in: query
+    name: pageNumber
+    type: integer
+    format: int32
+    description: Número de página a mostrar en la búsqueda
+    minimum: 0
+    default: 0
+    
+  PageSizeQueryParam:
+    in: query
+    name: pageSize
+    type: integer
+    format: int32
+    description: Número de elementos máximos a mostrar por página en la búsqueda 
+    minimum: 1
+    maximum: 50
+    default: 30
+    
+  OrderByQueryParam:
+    in: query
+    name: orderBy
+    type: string
+    description: Campo para ordenamiento de resultados
+    default: "createdAt"
+    
+  SortOrderQueryParam:
+    in: query
+    name: sortOrder
+    type: string
+    <<: *SORT_DIRECTION
+    description: Ordenamiento ascendente y descendente
+    default: "ASC"
+  
+  FromCreatedAtQueryParam:
+    in: query
+    name: fromCreatedAt
+    type: string
+    format: date-time
+    description: Desde la fecha de Creación en formato `yyyy-mm-ddThh:mm:ss` definido en el RFC3339
+    default: "2020-05-16T:09:00:00"
+    
+  ToCreatedAtQueryParam:
+    in: query
+    name: toCreatedAt
+    type: string
+    format: date-time
+    description: Hasta la fecha de Creación en formato `yyyy-mm-ddThh:mm:ss` definido en el RFC3339
+    default: "2020-05-16T:09:00:00"
+
+responses:
+
+## Response
+  
+  NoContent:
+    description: 204 - No Content
+  
+  BadRequest:
+    description: 400 - Bad Request
+    schema:
+      $ref: "#/definitions/BadRequest"
+  
+  Unauthorized:
+    description: 401 - Unauthorized
+    schema:
+      $ref: "#/definitions/Unauthorized"
+  
+  Forbidden:
+    description: 403 - Forbidden
+    schema:
+      $ref: "#/definitions/Forbidden"
+  
+  NotFound:
+    description: 404 - Not Found
+    schema:
+      $ref: "#/definitions/NotFound"
+  
+  InternalServerError:
+    description: 500 - Internal Server Error
+    schema:
+      $ref: "#/definitions/InternalServerError"
