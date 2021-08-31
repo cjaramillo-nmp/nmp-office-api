@@ -94,6 +94,43 @@ definitions:
         type: string
         example: Ocurrio un error interno en el servidor.
 
+## Pagination Resources
+
+  Link:
+    type: object
+    properties:
+      key:
+        type: string
+      value: 
+        type: string
+
+  LinkArray:
+    type: array
+    items:
+      $ref: "#/definitions/Link"
+
+  Page:
+    type: object
+    description: Información de paginación
+    required: 
+      - number
+      - size
+      - totalPages
+      - totalElements
+    properties:
+      number:
+        type: integer
+        description: Número de página
+      size: 
+        type: integer
+        description: Número de elementos solicitados
+      totalPages:
+        type: integer
+        description: Número de páginas encontradas
+      totalElements:
+        type: integer
+        description: Total de coincidencias encontradas
+
 ## Constantes
   
   SortDirection: &SORT_DIRECTION
@@ -116,6 +153,244 @@ definitions:
       - NMP
       - FMP
 
+## Origen
+
+  Origin:
+    title: Origen
+    type: object
+    required:
+      - unidadOrganizacional
+      - canal
+      - producto
+      - origenDato
+    properties:
+      unidadOrganizacional:
+        type: string
+        description: Unidad Organizacional
+      canal:
+        type: string
+        description: Canal
+      producto:
+        type: string
+        description: Producto
+      origenDato:
+        type: string
+        description: Origen del Dato
+
+## Autor
+
+  Author:
+    title: Autor
+    type: object
+    required:
+      - id
+      - nombre
+    properties:
+      id:
+        description: Identificador único de autor
+        type: string
+      nombre:
+        description: Nombre del autor
+        type: string
+
+## Client
+
+  ClientMin:
+    title: Cliente
+    type: object
+    required:
+      - id
+      - nombre
+      - apellidoPaterno
+      - apellidoMaterno
+    properties:
+      id: 
+        type: string
+        description: > 
+          Identificador único de cliente, asignado en el alta de registro
+          en MongoDB
+      nombre:
+        type: string
+        description: Nombre (s) del cliente
+      apellidoPaterno:
+        type: string
+        description: Apellido Paterno del cliente
+      apellidoMaterno:
+        type: string
+        description: Apellido Materno del cliente
+
+## Solicitud
+
+  Request:
+    title: Solicitud
+    type: object
+    required:
+      - id
+      - folio
+      - estado
+      - tipo
+      - cliente
+      - autor
+      - origen
+      - fechaCreacion
+      - fechaActualizacion
+    properties:
+      id:
+        description: Identificador único de solicitud asignado por MongoDB
+        type: string
+      folio:
+        description: Identificador único de solicitud generado en base al tipo de solicitud
+        type: string
+      estado:
+        description: Estado de la solicitud
+      tipo:
+        $ref: "#/definitions/RequestTypeMin"
+      cliente:
+        $ref: "#/definitions/ClientMin"
+      autor:
+        $ref: "#/definitions/Author"
+      origen:
+        $ref: "#/definitions/Origin"
+      fechaCreacion:
+        type: string
+        format: timestamp
+        description: Fecha de creación
+      fechaActualizacion:
+        type: string
+        format: timestamp
+        description: Fecha de última actualización
+    
+  CreatedRequest:
+    title: Creación de solicitud
+    type: object
+    
+  RequestDetail:
+    title: Detalle de solicitud
+    type: object
+
+  UpdatedRequest:
+    title: Creación de solicitud
+    type: object
+
+  ArrayOfRequest:
+    type: array
+    items:
+      $ref: "#/definitions/Request"
+
+  PaginationOfRequest:
+    title: Creación de solicitud
+    type: object
+    required:
+      - content
+      - page
+    properties:
+      content:
+        $ref: '#/definitions/ArrayOfRequest'
+      page:
+        $ref: '#/definitions/Page'
+
+## Tipos de Solicitud
+
+  RequestTypeMin:
+    title: Tipo de solicitud
+    type: object
+    properties:
+      id: 
+        description: Identificador único de tipo de solicitud
+        type: string
+      nombre:
+        description: Nombre del tipo de solicitud
+        type: string
+
+  RequestType:
+    title: Tipo de Solicitud
+    type: object
+    required:
+      - id
+      - nombre
+      - fechaCreacion
+      - fechaActualizacion
+    properties:
+      id: 
+        description: Identificador único de tipo de solicitud
+        type: string
+      nombre:
+        description: Nombre del tipo de solicitud
+        type: string
+      fechaCreacion:
+        type: string
+        format: timestamp
+        description: Fecha de creación
+      fechaActualizacion:
+        type: string
+        format: timestamp
+        description: Fecha de última actualización
+    
+  CreatedRequestType:
+    title: Creación tipo de solicitud
+    type: object
+    required:
+      - nombre
+    properties:
+      nombre:
+        description: Nombre del tipo de solicitud
+        type: string
+    
+  RequestTypeDetail:
+    title: Detalle de tipo de solicitud
+    type: object
+    required:
+      - id
+      - nombre
+      - fechaCreacion
+      - fechaActualizacion
+    properties:
+      id: 
+        description: Identificador único de tipo de solicitud
+        type: string
+      nombre:
+        description: Nombre del tipo de solicitud
+        type: string
+      fechaCreacion:
+        type: string
+        format: timestamp
+        description: Fecha de creación
+      fechaActualizacion:
+        type: string
+        format: timestamp
+        description: Fecha de última actualización
+
+  UpdatedRequestType:
+    title: Creación de tipo desolicitud
+    type: object
+    required:
+      - id
+      - nombre
+    properties:
+      id: 
+        description: Identificador único de tipo de solicitud
+        type: string
+      nombre:
+        description: Nombre del tipo de solicitud
+        type: string
+
+  ArrayOfRequestType:
+    type: array
+    items:
+      $ref: "#/definitions/RequestType"
+
+  PaginationOfRequestType:
+    title: Creación de tipo de solicitud
+    type: object
+    required:
+      - content
+      - page
+    properties:
+      content:
+        $ref: '#/definitions/ArrayOfRequestType'
+      page:
+        $ref: '#/definitions/Page'
+
 parameters:
   
 ## Header Params
@@ -125,7 +400,7 @@ parameters:
     type: string
     <<: *UnidadOrganizacional
     description: Unidad organizacional
-    default: "FMP"
+    default: "NMP"
     required: true
   
   ChannelHeader:
@@ -133,7 +408,7 @@ parameters:
     name: canal
     type: string
     description: Canal
-    default: "Fénix"
+    default: "Kiosko"
     required: true
   
   ProductHeader:
@@ -141,7 +416,7 @@ parameters:
     name: producto
     type: string
     description: Producto
-    default: "Crédito Personal"
+    default: "Gestión de Clientes"
     required: true  
     
   DataOriginHeader:
@@ -149,38 +424,38 @@ parameters:
     name: origenDato
     type: string
     description: Origen de los datos
-    default: "Fénix Web"
+    default: "Web Kiosko"
     required: true
 
 ## Query Params
   UOQueryParam:
     in: query
-    name: origin.unidadOrganizacional
+    name: origen.unidadOrganizacional
     type: string
     <<: *UnidadOrganizacional
     description: Unidad organizacional
-    default: "FMP"
+    default: "NMP"
   
   ChannelQueryParam:
     in: query
-    name: origin.canal
+    name: origen.canal
     type: string
     description: Canal
-    default: "Fénix & Paradigmas"
+    default: "Kiosko"
   
   ProductQueryParam:
     in: query
-    name: origin.producto
+    name: origen.producto
     type: string
     description: Producto
-    default: "Crédito Personal"
+    default: "Gestión de Clientes"
     
   DataOriginQueryParam:
     in: query
-    name: origin.origenDato
+    name: origen.origenDato
     type: string
     description: Origen de los datos
-    default: "Web Fénix"
+    default: "Web Kiosko"
   
   PageNumberQueryParam:
     in: query
@@ -263,3 +538,89 @@ responses:
     description: 500 - Internal Server Error
     schema:
       $ref: "#/definitions/InternalServerError"
+
+## GET /solicitudes
+  
+  GetPaginationOfRequestResponse:
+    description: 200 - Ok
+    schema:
+      $ref: "#/definitions/PaginationOfRequest"
+    examples:
+      application/json:
+        {
+            "content": [
+                {
+                    "id": "612d47382b4b088b35e7e463",
+                    "folio": "RHU-300821",
+                    "estado": "CAPTURADA",
+                    "tipo": {
+                        "id": "612d47333bb9aac54f122023",
+                        "nombre": "Registro de Huella"
+                    },
+                    "cliente": {
+                        "id": "1579882956254802",
+                        "nombre": "Cristian Gerardo",
+                        "apellidoPaterno": "Jaramillo",
+                        "apellidoMaterno": "Cruz"
+                    },
+                    "autor": {
+                        "id": "cnolascop",
+                        "nombre": "Claudia Ivonne Nolasco Pereira"
+                    },
+                    "origen": {
+                        "unidadOrganizacional": "NMP",
+                        "canal": "Kiosko",
+                        "orginDato": "Web Kiosko",
+                        "producto": "Gestión de Clientes"
+                    },
+                    "fechaCreacion": "2021-06-14T00:00:00",
+                    "fechaActualizacion": "2021-06-14T00:00:00"
+                }
+            ],
+            "page": {
+                "number": 0,
+                "size": 30,
+                "totalPages": 1,
+                "totalElements": 4
+            }
+        }
+      
+paths:
+
+  /solicitudes:
+    x-summary: /solicitudes
+    parameters:
+      - $ref: '#/parameters/ChannelHeader'
+      - $ref: '#/parameters/UOHeader'
+      - $ref: '#/parameters/DataOriginHeader'
+      - $ref: '#/parameters/ProductHeader'
+    get:
+      tags: 
+        - Solicitudes
+      parameters:
+        - $ref: "#/parameters/UOQueryParam"
+        - $ref: "#/parameters/ChannelQueryParam"
+        - $ref: "#/parameters/ProductQueryParam"
+        - $ref: "#/parameters/DataOriginQueryParam"
+        - $ref: "#/parameters/FromCreatedAtQueryParam"
+        - $ref: "#/parameters/ToCreatedAtQueryParam"
+        - $ref: "#/parameters/SortOrderQueryParam"
+        - in: query
+          name: tipoSolicitud
+          description: Tipo de solicitud
+          type: string
+          format: uuid
+      operationId: getV1PaginateOfRequest
+      responses:
+        "200":
+          $ref: "#/responses/GetPaginationOfRequestResponse"
+        '400':
+          $ref: '#/responses/BadRequest'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Forbidden'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/InternalServerError'
